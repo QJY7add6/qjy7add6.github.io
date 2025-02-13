@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+  <title>五子棋小游戏</title>
+  <meta name="keywords" content="五子棋游戏">
+  <meta name="description" content="五子棋游戏">
+  <style>
+    body {
+      text-align: center;
+      margin: 0;
+    }
+
+    canvas {
+      vertical-align: top;
+    }
+
+    .dialog {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, .45);
+      display: none;
+    }
+
+    .dialog.open {
+      display: block;
+    }
+
+    .dialog .alert {
+      background-color: rgba(255, 255, 255, .9);
+      border-radius: 5px;
+      box-shadow: 1px 2px 8px rgba(0, 0, 0, .5);
+      width: 250px;
+      height: 160px;
+      left: 50%;
+      top: 50%;
+      position: absolute;
+      text-align: center;
+      margin: -80px 0 0 -125px;
+    }
+
+    .dialog button {
+      border: none;
+      background-color: rgb(68, 183, 58);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 4px;
+      outline: none;
+      transition: all 300ms;
+      -webkit-transition: all 300ms;
+    }
+
+    .dialog button:hover {
+      background-color: rgba(68, 183, 58, .9);
+    }
+
+    .dialog button:active {
+      box-shadow: 0 2px 6px rgba(0, 0, 0, .5);
+    }
+
+    .dialog p {
+      margin: 0 0 16px 0;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="game" width="480" height="480"></canvas>
+  <div id="dialog" class="dialog" onclick="this.className='dialog'">
+    <div class="alert">
+      <h4 id="title">恭喜!</h4>
+      <p id="winner"></p>
+      <button onclick="restart()">重新开始</button>
+      <button onclick="restart()"><a href="index.html">返回主页</a></button>
+    </div>
+  </div>
+  <script>
+    const canvas = document.getElementById('game');
+    const ctx = canvas.getContext('2d');
+    const max = Math.min(window.innerWidth, window.innerHeight);
+    const cellSize = max / 16; // 每个格子的大小
+    const boardSize = 15; // 棋盘的大小，15x15
+    let currentPlayer = 'black'; // 当前玩家
+    let gameOver; // 游戏是否结束
+    let gameBoard; // 游戏棋盘
+    let draw = 0; // 判断是否和棋
+
+    canvas.width = max;
+    canvas.height = max;
+
+    // 绘制棋盘
+    function drawBoard() {
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = 'black';
+      for (let i = 0; i < boardSize; i++) {
+        ctx.beginPath();
+        ctx.moveTo(cellSize + i * cellSize, cellSize);
+        ctx.lineTo(cellSize + i * cellSize, cellSize * boardSize);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(cellSize, cellSize + i * cellSize);
+        ctx.lineTo(cellSize * boardSize, cellSize + i * cellSize);
+        ctx.stroke();
+      }
+    }
+
+    // 绘制棋子
+    function drawPiece(x, y, size, color) {
+      ctx.beginPath();
+      ctx.arc(x * size + size, y * size + size, size / 2.5, 0, 2 * Math.PI);
+      ctx.fillStyle = color;
+      ctx.fill();
+      ctx.stroke();
+    }
+
+    // 遍历所有行、列和斜线
+    function traverseDiagonals(matrix, player, fn) {
+      const m = matrix.length;
+      const n = matrix[0].length;
+
+      // 遍历所有行
+      for (let i = 0; i < m; i++) {
+        let diagonal = [];
+        for (let j = 0; j < n; j++) {
+          diagonal.push(matrix[i][j]);
+        }
+        if (fn(diagonal, player)) return player;
+      }
+
+      // 遍历所有列
+      for (let i = 0; i < m; i++) {
+        let diagonal = [];
+        for (let j = 0; j < n; j++) {
+          diagonal.push(matrix[j][i]);
+        }
+        if (fn(diagonal, player)) return player;
+      }
+
+      // 遍历右上角所有对角线包括从左上到右下对角线
+      for (let i = 0; i < m; i++) {
+        let diagonal = [];
+        for (let j = 0; j < i + 1; j++) {
+          diagonal.push(matrix[j][n + j - 1 - i]);
+        }
+        if (fn(diagonal, player)) return player;
+      }
+
+      // 遍历左下角所有对角线不包括从左上到右下对角线
+      for (let i = 1; i < m; i++) {
+        let diagonal = [];
+        for (let j = i; j < n; j++) {
+          diagonal.push(matrix[j][j - i]);
+        }
+        if (fn(diagonal, player)) return player;
+      }
+
+      // 遍历左上角所有对角线包括从右上到左下对角线
+      for (let i = m - 1; i >= 0; i--) {
+        let diagonal = [];
+        for (let j = 0; j < n - i; j++) {
+          diagonal.push(matrix[j][n - j - 1 - i]);
+        }
+        if (fn(diagonal, player)) return player;
+      }
+
+      // 遍历右下角所有对角线不包括从右上到左下对角线
+      for (let i = 1; i < m; i++) {
+        let diagonal = [];
+        for (let j = i; j < n; j++) {
+          diagonal.push(matrix[j][n - 1 - j + i]);
+        }
+        if (fn(diagonal, player)) return player;
+      }
+    }
+
+    // 检查是赢棋方
+    function checkLine(line, player) {
+      for (let i = 0; i < 11; i++) {
+        if (line[i] === player && line[i + 1] === player &&
+          line[i + 2] === player && line[i + 3] === player &&
+          line[i + 4] === player) {
+          return true;
+        }
+      }
+    }
+
+    // 显示获胜方
+    function openDialog(winner) {
+      document.getElementById('winner').innerText = winner === 'black' ? '黑方获胜' : winner === 'white' ? '白方获胜' : '势均力敌-平手';
+      document.getElementById('dialog').className = 'dialog open';
+    }
+
+    // 开始游戏
+    function start() {
+      currentPlayer = 'black';
+      gameOver = false;
+      gameBoard = Array(boardSize).fill().map(() => Array(boardSize).fill(null));
+      draw = 0;
+      drawBoard();
+    }
+
+    // 重新开始
+    function restart() {
+      document.getElementById('dialog').className = 'dialog';
+      ctx.clearRect(0, 0, canvas.width, canvas.height); // 清除画布
+      start();
+    }
+
+    // 处理鼠标点击事件
+    function handleMouseClick(event) {
+      if (gameOver) return;
+
+      const rect = canvas.getBoundingClientRect();
+      const x = Math.floor((event.clientX - rect.left - cellSize / 2) / cellSize);
+      const y = Math.floor((event.clientY - rect.top - cellSize / 2) / cellSize);
+      let winner;
+
+      if (x >= 0 && y >= 0 && x < boardSize && y < boardSize && gameBoard[y][x] === null) {
+        gameBoard[y][x] = currentPlayer;
+        drawPiece(x, y, cellSize, currentPlayer === 'black' ? 'black' : 'white');
+
+        // 检查是否获胜
+        winner = traverseDiagonals(gameBoard, currentPlayer, function (line, player) {
+          if (checkLine(line, player)) return player
+        });
+
+        if (winner) {
+          gameOver = true;
+          openDialog(winner);
+          return;
+        }
+
+        // 检测是否和棋
+        if (++draw === boardSize * boardSize) {
+          gameOver = true;
+          openDialog();
+          return;
+        }
+
+        // 切换玩家
+        currentPlayer = currentPlayer === 'black' ? 'white' : 'black';
+      }
+    }
+
+    canvas.addEventListener('click', handleMouseClick);
+
+    start();
+  </script>
+</body>
+
+</html>
