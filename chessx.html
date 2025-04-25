@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+  <title>多人五子棋</title>
+  <style>
+    /* 保持原有样式不变 */
+    body { text-align: center; margin: 0; font-family: Arial, sans-serif; }
+    #config-panel { margin: 20px auto; padding: 10px; background: #f5f5f5; border-radius: 8px; width: 300px; }
+    input[type="number"] { width: 60px; padding: 5px; margin-right: 10px; }
+    button#confirm { background: #4CAF50; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; }
+    canvas { margin-top: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.2); }
+    .dialog { /* 原有样式保持不变 */ }
+    .color-indicator { display: inline-block; width: 20px; height: 20px; border-radius: 50%; margin: 0 5px; border: 1px solid #ddd; }
+  </style>
+</head>
+
+<body>
+  <div id="config-panel">
+    <label>玩家数量（2-6）:</label>
+    <input type="number" id="playerCount" min="2" max="6" value="3">
+    <button id="confirm" onclick="initGame()">开盘</button>
+    <div id="color-display" style="margin-top: 10px;"></div>
+  </div>
+  <canvas id="game" width="480" height="480"></canvas>
+  <div id="dialog" class="dialog" onclick="this.className='dialog'">
+    <div class="alert">
+      <h4 id="title">恭喜!</h4>
+      <p id="winner"></p>
+      <button onclick="restart()">重新开始</button>
+    </div>
+  </div>
+
+  <script>
+    const COLOR_PALETTE = [
+      { name: 'black', label: '黑方' },
+      { name: 'white', label: '白方' },
+      { name: 'blue', label: '蓝方' },
+      { name: 'green', label: '绿方' },
+      { name: 'red', label: '红方' },
+      { name: 'purple', label: '紫方' }
+    ];
+
+    const canvas = document.getElementById('game');
+    const ctx = canvas.getContext('2d');
+    let max, cellSize, boardSize = 15;
+    let players = [];
+    let currentPlayerIndex = 0;
+    let gameOver, gameBoard, draw;
+
+    // 修复正确的胜利
+    function checkLine(line, player) {
+      for (let i = 0; i <= line.length - 5; i++) {
+        if (line[i] === player && 
+            line[i+1] === player && 
+            line[i+2] === player && 
+            line[i+3] === player && 
+            line[i+4] === player) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    // 修复优化对角线遍历算法
+    function traverseDiagonals(matrix, player) {
+      const size = matrix.length;
+      
+      // 检查行和列
+      for (let i = 0; i < size; i++) {
+        if (checkLine(matrix[i], player)) return true; // 行检查
+        const column = matrix.map(row => row[i]);
+        if (checkLine(column, player)) return true; // 列检查
+      }
+
+      // 检查正对角线（左上右下
+      for (let i = 0; i <= size - 5; i++) {
+        for (let j = 0; j <= size - 5; j++) {
+          const diagonal = [];
+          for (let k = 0; k < 5; k++) {
+            diagonal.push(matrix[i+k][j+k]);
+          }
+          if (checkLine(diagonal, player)) return true;
+        }
+      }
+
+      // 检反对角线右上左下）
+      for (let i = 0; i <= size - 5; i++) {
+        for (let j = size - 1; j >= 4; j--) {
+          const diagonal = [];
+          for (let k = 0; k < 5; k++) {
+            diagonal.push(matrix[i+k][j-k]);
+          }
+          if (checkLine(diagonal, player)) return true;
+        }
+      }
+
+      return false;
+    }
+
+    function initGame() {
+      const playerCount = Math.min(6, Math.max(2, 
+        parseInt(document.getElementById('playerCount').value) || 3));
+      
+      players = COLOR_PALETTE.slice(0, playerCount);
+      
+      const colorDisplay = document.getElementById('color-display');
+      colorDisplay.innerHTML = players.map(p => 
+        `<div style="display: inline-block; margin: 0 10px;">
+          <div class="color-indicator" style="background: ${p.name}"></div>
+          <span>${p.label}</span>
+        </div>`
+      ).join('');
+
+      max = Math.min(window.innerWidth - 40, 480);
+      cellSize = max / 16;
+      canvas.width = canvas.height = max;
+      
+      currentPlayerIndex = 0;
+      gameOver = false;
+      gameBoard = Array(boardSize).fill().map(() => Array(boardSize).fill(null));
+      draw = 0;
+      
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawBoard();
+    }
+
+    function drawBoard() {
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = 'black';
+      for (let i = 0; i < boardSize; i++) {
+        ctx.beginPath();
+        ctx.moveTo(cellSize + i * cellSize, cellSize);
+        ctx.lineTo(cellSize + i * cellSize, cellSize * boardSize);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(cellSize, cellSize + i * cellSize);
+        ctx.lineTo(cellSize * boardSize, cellSize + i * cellSize);
+        ctx.stroke();
+      }
+    }
+
+    function drawPiece(x, y, color) {
+      ctx.beginPath();
+      ctx.arc(x * cellSize + cellSize, y * cellSize + cellSize, 
+              cellSize / 2.5, 0, 2 * Math.PI);
+      ctx.fillStyle = color;
+      ctx.fill();
+      ctx.stroke();
+    }
+
+    function openDialog(winner) {
+      const winnerLabel = players.find(p => p.name === winner)?.label || '平局';
+      document.getElementById('winner').innerText = winner ? `${winnerLabel} 获胜!` : '势均力敌-平手';
+      document.getElementById('dialog').className = 'dialog open';
+    }
+
+    function restart() {
+      document.getElementById('dialog').className = 'dialog';
+      initGame();
+    }
+
+    function handleMouseClick(event) {
+      if (gameOver || players.length < 2) return;
+
+      const rect = canvas.getBoundingClientRect();
+      const x = Math.floor((event.clientX - rect.left - cellSize/2) / cellSize);
+      const y = Math.floor((event.clientY - rect.top - cellSize/2) / cellSize);
+      const currentPlayer = players[currentPlayerIndex].name;
+
+      if (x >= 0 && y >= 0 && x < boardSize && y < boardSize && !gameBoard[y][x]) {
+        gameBoard[y][x] = currentPlayer;
+        drawPiece(x, y, currentPlayer);
+
+        // 修复使用新胜利检测方法
+        if (traverseDiagonals(gameBoard, currentPlayer)) {
+          gameOver = true;
+          openDialog(currentPlayer);
+          return;
+        }
+
+        if (++draw === boardSize * boardSize) {
+          gameOver = true;
+          openDialog(null);
+          return;
+        }
+
+        currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+      }
+    }
+
+    canvas.addEventListener('click', handleMouseClick);
+    initGame();
+  </script>
+</body>
+</html>
