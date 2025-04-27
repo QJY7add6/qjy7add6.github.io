@@ -1,0 +1,354 @@
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QJY HUB - 星辰浩瀚的知识宇宙</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;500;700&family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2A2356;
+            --secondary: #3C9DF8;
+            --accent: #FF7E67;
+            --text: rgba(255,255,255,0.9);
+            --bg: linear-gradient(135deg, #0F0C29 0%, #302B63 100%);
+            --nav-bg: rgba(255,255,255,0.05);
+            --card-bg: rgba(255,255,255,0.05);
+            --border: rgba(255,255,255,0.1);
+            --particle-color: rgba(255,255,255,0.3);
+        }
+
+        [data-theme="light"] {
+            --primary: #F8F9FA;
+            --secondary: #2A6DFF;
+            --accent: #FF6B6B;
+            --text: rgba(0,0,0,0.85);
+            --bg: linear-gradient(135deg, #F1F3F5 0%, #E9ECEF 100%);
+            --nav-bg: rgba(0,0,0,0.05);
+            --card-bg: rgba(255,255,255,0.9);
+            --border: rgba(0,0,0,0.1);
+            --particle-color: rgba(0,0,0,0.15);
+        }
+
+        body {
+            font-family: 'Poppins', 'Noto Sans SC', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.8;
+            margin: 0;
+            min-height: 100vh;
+            transition: background 0.5s ease, color 0.3s ease;
+        }
+
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, #3A1C71 100%);
+            padding: 4rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--secondary) 0%, var(--accent) 100%);
+            border-radius: 2px;
+        }
+
+        header h1 {
+            font-size: 3.5rem;
+            margin: 0 0 1rem;
+            letter-spacing: 2px;
+            text-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        nav {
+            background: var(--nav-bg);
+            backdrop-filter: blur(10px);
+            padding: 1.2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        nav a {
+            color: var(--text);
+            text-decoration: none;
+            margin: 0 1.5rem;
+            padding: 0.8rem 1.2rem;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        nav a:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(60,157,248,0.3);
+        }
+
+        .container {
+            padding: 3rem 2rem;
+            margin: 0 auto;
+            max-width: 1200px;
+        }
+
+        .post {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid var(--border);
+        }
+
+        .post:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .post h2 {
+            color: var(--secondary);
+            font-size: 2rem;
+            margin: 0 0 1.5rem;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .post h2::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 6px;
+            height: 70%;
+            background: var(--accent);
+            border-radius: 3px;
+        }
+
+        .post p {
+            color: var(--text);
+            margin: 1.2rem 0;
+            opacity: 0.9;
+        }
+
+        a {
+            color: var(--secondary);
+            text-decoration: none;
+            position: relative;
+        }
+
+        a:hover {
+            color: var(--accent);
+            text-decoration: underline;
+        }
+
+        footer {
+            background: rgba(0,0,0,0.3);
+            padding: 2rem;
+            text-align: center;
+            margin-top: 5rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .theme-toggle {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--card-bg);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1) rotate(15deg);
+        }
+
+        .theme-toggle::before {
+            content: "🌓";
+            font-size: 55px;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2.5rem;
+            }
+            nav a {
+                margin: 0 0.5rem;
+                padding: 0.5rem 1rem;
+            }
+            .post {
+                padding: 1.5rem;
+            }
+            .theme-toggle {
+                bottom: 20px;
+                right: 20px;
+                width: 40px;
+                height: 40px;
+            }
+            nav {
+                padding: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="particles-js"></div>
+    <div class="theme-toggle"></div>
+
+    <header>
+        <h1>欢迎来到QJY HUB</h1>
+        <p>权嘉佑的个人博客</p>
+    </header>
+    <nav>
+        <a href="#">首页</a>
+        <a href="apps.html">软件库</a>
+        <a href="home.html">个人主页</a>
+        <a href="gamehall.html">小游戏</a>
+        <a href="introduce.html">关于我</a>
+        <a href="introduce-en.html">English</a>
+    </nav>
+    
+    <div class="container">
+        <a href="indexed.html">点击切换原主题</a>
+        <div class="post">
+            <h2>莫说天无涯，海无岸，纵然归程需万载。</h2>
+        </div>
+
+        <div class="post">
+            <h2>你好，世界</h2>
+            <p>QJY HUB - QJY的个人博客正式上线！</p>
+            <p>查看 <a href="introduce.html">更多</a></p>
+        </div>
+        <div class="post">
+            <h2>重要！</h2>
+            <p>由于服务器性能相对较低，再加上刚开站，可能会出现站点不稳定的现象(例如无法连接或xxx未响应)，多加载几次就可以了。各类原因，以后可能不怎么会更新了。</p>
+        </div>
+        <div class="post">
+            <h2>焕然一新</h2>
+            <p>QJY HUB大厅主题换新颜！</p>
+        </div>
+        <div class="post">
+            <h2>推荐！</h2>
+            <p>QJY Mail - QJY原创的即时通讯工具正式上线！</p>
+            <p>在软件库查看或<a href="qjymaibetaBuild22N1_newyear_sign.apk">立即下载</a></p>
+        </div>
+        <div class="post">
+            <h2>休息一下</h2>
+            <p>嘿！现在就来休息一下玩点小游戏吧！</p>
+            <p>点击 <a href="game.html">进入</a></p>
+        </div>
+        <div class="post">
+            <h2>君·子·游·戏</h2>
+            <p>新——君子围棋</p>
+            <p>立即<a href="weiqi.html">开始</a></p>
+        </div>
+        <div class="post">
+            <h2>NNNew Game!</h2>
+            <p>双人五子棋小游戏听起来不错！进来挑战一下？</p>
+            <p>立即<a href="chess.html">开始</a></p>
+        </div>
+        <div class="post">
+            <p>还有更多人想玩五子棋？试试</p>
+            <p><a href="chessx.html">多人五子棋</a></p>
+        </div>
+        <div class="post">
+            <h2>最新成果</h2>
+            <p>Dreed OS系统3.0发行版正式发布！</p>
+            <p>点击 <a href="advance.html">查看</a></p>
+        </div>
+        <div class="post">
+            <h2>Have a try</h2>
+            <p>第一个利用EPL开发的“无毒无害”适用于Windows的电脑病毒---“QJY弹窗病毒”</p>
+            <p>在软件库 <a href="apps.html">查看</a></p>
+        </div>
+    </div>
+    <footer>
+        <p> © 2023-2025 QJY HUB 版权所有</p>
+    </footer>
+
+    <script>
+        const themeToggle = document.querySelector('.theme-toggle');
+        const body = document.body;
+
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) body.setAttribute('data-theme', savedTheme);
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            body.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            particlesJS('particles-js', getParticleConfig(newTheme));
+        });
+
+        function getParticleConfig(theme) {
+            return {
+                particles: {
+                    number: { value: 80, density: { enable: true, value_area: 800 } },
+                    color: { value: theme === 'light' ? '#000000' : '#ffffff' },
+                    shape: { type: "circle" },
+                    opacity: { value: 0.3, random: true },
+                    size: { value: 3, random: true },
+                    line_linked: {
+                        enable: true,
+                        distance: 150,
+                        color: theme === 'light' ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.2)',
+                        opacity: 0.4,
+                        width: 1
+                    },
+                    move: {
+                        enable: true,
+                        speed: 3,
+                        direction: "none",
+                        random: false,
+                        straight: false,
+                        out_mode: "out",
+                        bounce: false
+                    }
+                },
+                interactivity: {
+                    detect_on: "canvas",
+                    events: {
+                        onhover: { enable: true, mode: "repulse" },
+                        onclick: { enable: true, mode: "push" },
+                        resize: true
+                    }
+                },
+                retina_detect: true
+            }
+        }
+
+        let currentTheme = localStorage.getItem('theme') || 'dark';
+        particlesJS('particles-js', getParticleConfig(currentTheme));
+    </script>
+</body>
+</html>

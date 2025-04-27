@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>游戏大厅 - QJY HUB</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            /* 主站CSS变量 */
+            --primary: #2A2356;
+            --secondary: #3C9DF8;
+            --accent: #FF7E67;
+            --text: rgba(255,255,255,0.9);
+            --bg: linear-gradient(135deg, #0F0C29 0%, #302B63 100%);
+            --nav-bg: rgba(255,255,255,0.05);
+            --card-bg: rgba(255,255,255,0.05);
+            --border: rgba(255,255,255,0.1);
+        }
+
+        [data-theme="light"] {
+            --primary: #F8F9FA;
+            --secondary: #2A6DFF;
+            --accent: #FF6B6B;
+            --text: rgba(0,0,0,0.85);
+            --bg: linear-gradient(135deg, #F1F3F5 0%, #E9ECEF 100%);
+            --nav-bg: rgba(0,0,0,0.05);
+            --card-bg: rgba(255,255,255,0.9);
+            --border: rgba(0,0,0,0.1);
+        }
+
+        body {
+            font-family: 'Poppins', 'Noto Sans SC', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.8;
+            margin: 0;
+            min-height: 100vh;
+            transition: background 0.5s ease, color 0.3s ease;
+        }
+
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, #3A1C71 100%);
+            padding: 4rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--secondary) 0%, var(--accent) 100%);
+            border-radius: 2px;
+        }
+
+        nav {
+            background: var(--nav-bg);
+            backdrop-filter: blur(10px);
+            padding: 1.2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav a {
+            color: var(--text);
+            text-decoration: none;
+            margin: 0 1.5rem;
+            padding: 0.8rem 1.2rem;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        nav a:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(60,157,248,0.3);
+        }
+
+        .container {
+            padding: 3rem 2rem;
+            margin: 0 auto;
+            max-width: 1200px;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 2rem 0;
+        }
+
+        .game-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            transition: transform 0.3s ease;
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-icon {
+            font-size: 3.5rem;
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+
+        .game-title {
+            font-size: 1.8rem;
+            margin: 1rem 0;
+            color: var(--secondary);
+        }
+
+        .game-desc {
+            color: var(--text);
+            opacity: 0.9;
+            min-height: 60px;
+            margin-bottom: 1.5rem;
+        }
+
+        /* 修复按钮可见性 */
+        .play-btn {
+            display: block;
+            width: 80%;
+            margin: 0 auto;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, var(--secondary), var(--accent));
+            color: #fff !important; /* 强制白色文字 */
+            border-radius: 30px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255,255,255,0.2);
+            font-weight: bold;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+
+        .play-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .theme-toggle {
+            /* 主站原有样式 */
+        }
+
+        footer {
+            background: rgba(0,0,0,0.3);
+            padding: 2rem;
+            text-align: center;
+            margin-top: 5rem;
+            border-top: 1px solid var(--border);
+        }
+
+        @media (max-width: 768px) {
+            .game-card {
+                padding: 1.5rem;
+            }
+            .play-btn {
+                width: 90%;
+                padding: 10px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="particles-js"></div>
+    <div class="theme-toggle"></div>
+
+    <header>
+        <h1>游戏大厅</h1>
+        <p>选择您想体验的经典游戏</p>
+    </header>
+    
+    <nav>
+        <a href="index.html">← 返回主站</a>
+        <a href="#chess">休闲游戏-未完待续</a>
+    </nav>
+
+    <div class="container">
+        <section id="chess">
+            <h2 style="padding-left:2rem">♟️ 经典棋类</h2>
+            <div class="games-grid">
+                <!-- 五子棋 -->
+                <div class="game-card">
+                    <i class="game-icon fas fa-chess-board"></i>
+                    <h3 class="game-title">双人五子棋</h3>
+                    <p class="game-desc">传统五子棋对战，支持本地双人模式，胜负判定系统</p>
+                    <a href="chess.html" class="play-btn">开始游戏</a>
+                </div>
+                <div class="game-card">
+                    <i class="game-icon fas fa-chess-board"></i>
+                    <h3 class="game-title">多人五子棋</h3>
+                    <p class="game-desc">创新五子棋对战，支持本地多人模式（2-6人），胜负判定系统</p>
+                    <a href="chessx.html" class="play-btn">开始游戏</a>
+                </div>
+
+                <!-- 围棋 -->
+                <div class="game-card">
+                    <i class="game-icon fas fa-chess-queen"></i>
+                    <h3 class="game-title">君子围棋</h3>
+                    <p class="game-desc">中国古典围棋的创新玩法，包含吃子、连子等创新特效，来源于开源社区。</p>
+                    <a href="weiqi.html" class="play-btn">开始游戏</a>
+                </div>
+
+                <!-- 水果忍者 -->
+                <div class="game-card">
+                    <i class="game-icon fas fa-apple-alt"></i>
+                    <h3 class="game-title">水果忍者</h3>
+                    <p class="game-desc">切割水果游戏，支持多点触控，包含三种游戏模式和记分系统。</p>
+                    <a href="game.html" class="play-btn">开始游戏</a>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <p>♜ 棋逢对手 将遇良才 | © 2023-2025 QJY HUB 版权所有</p>
+    </footer>
+
+    <script>
+        // 主题切换与粒子系统代码与主站保持一致
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.game-card').forEach((card, index) => {
+                setTimeout(() => {
+                    card.style.opacity = 1;
+                    card.style.transform = 'translateY(0)';
+                }, index * 150);
+            });
+        });
+    </script>
+</body>
+</html>
