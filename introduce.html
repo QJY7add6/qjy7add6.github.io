@@ -3,47 +3,632 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>关于QJY HUB</title>
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
-    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <title>关于 QJY HUB | 科技探索与知识分享</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;500;700&family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <style>
-        /* ... 您的样式 ... */
+        :root {
+            --primary: #2A2356;
+            --secondary: #3C9DF8;
+            --accent: #FF7E67;
+            --text: rgba(255,255,255,0.9);
+            --bg: linear-gradient(135deg, #0F0C29 0%, #302B63 100%);
+            --nav-bg: rgba(255,255,255,0.05);
+            --card-bg: rgba(255,255,255,0.05);
+            --border: rgba(255,255,255,0.1);
+            --particle-color: rgba(255,255,255,0.3);
+        }
+
+        [data-theme="light"] {
+            --primary: #F8F9FA;
+            --secondary: #2A6DFF;
+            --accent: #FF6B6B;
+            --text: rgba(0,0,0,0.85);
+            --bg: linear-gradient(135deg, #F1F3F5 0%, #E9ECEF 100%);
+            --nav-bg: rgba(0,0,0,0.05);
+            --card-bg: rgba(255,255,255,0.9);
+            --border: rgba(0,0,0,0.1);
+            --particle-color: rgba(0,0,0,0.15);
+        }
+
+        body {
+            font-family: 'Poppins', 'Noto Sans SC', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.8;
+            margin: 0;
+            min-height: 100vh;
+            transition: background 0.5s ease, color 0.3s ease;
+            overflow-x: hidden;
+        }
+
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+
+        .tech-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(60, 157, 248, 0.05) 0px, transparent 2px),
+                radial-gradient(circle at 30% 40%, rgba(60, 157, 248, 0.05) 0px, transparent 2px),
+                radial-gradient(circle at 70% 90%, rgba(60, 157, 248, 0.05) 0px, transparent 2px),
+                radial-gradient(circle at 90% 30%, rgba(60, 157, 248, 0.05) 0px, transparent 2px);
+            background-size: 250px 250px;
+            z-index: -2;
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, #3A1C71 100%);
+            padding: 3rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        header::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--secondary) 0%, var(--accent) 100%);
+            border-radius: 2px;
+        }
+
+        header h1 {
+            font-size: 2.8rem;
+            margin: 0 0 1rem;
+            letter-spacing: 2px;
+            text-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            position: relative;
+            z-index: 1;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        header .subtitle {
+            font-size: 1.4rem;
+            opacity: 0.85;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        nav {
+            background: var(--nav-bg);
+            backdrop-filter: blur(10px);
+            padding: 1.2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            align-items: center;
+            transition: background 0.3s;
+        }
+
+        nav.scrolled {
+            background: rgba(42, 35, 86, 0.8);
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+        }
+
+        [data-theme="light"] nav.scrolled {
+            background: rgba(248, 249, 250, 0.9);
+        }
+
+        nav a {
+            color: var(--text);
+            text-decoration: none;
+            margin: 0 1.5rem;
+            padding: 0.8rem 1.2rem;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            position: relative;
+        }
+
+        nav a:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(60,157,248,0.3);
+        }
+
+        nav a.active {
+            background: rgba(255,255,255,0.15);
+            color: var(--accent);
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: all 0.3s;
+            transform: translateX(-50%);
+        }
+
+        nav a:hover::after {
+            width: 60%;
+        }
+
+        .container {
+            padding: 3rem 2rem;
+            margin: 0 auto;
+            max-width: 900px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .content-section {
+            margin-bottom: 3rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 15px;
+            border: 1px solid var(--border);
+            backdrop-filter: blur(5px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card h2 {
+            color: var(--secondary);
+            font-size: 2rem;
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+        
+        .card h2::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 50px;
+            height: 3px;
+            background: var(--accent);
+            border-radius: 3px;
+        }
+        
+        .card p {
+            font-size: 1.1rem;
+            margin: 1.2rem 0;
+            line-height: 1.8;
+        }
+        
+        .contact-info {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .contact-info li {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+        
+        .contact-info i {
+            margin-right: 15px;
+            color: var(--accent);
+            font-size: 1.3rem;
+        }
+        
+        .badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 2rem 0;
+        }
+        
+        .badge {
+            background: rgba(60, 157, 248, 0.15);
+            color: var(--secondary);
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        .badge i {
+            margin-right: 8px;
+            font-size: 1.1rem;
+        }
+        
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 1.5rem;
+        }
+        
+        .gallery-item {
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            aspect-ratio: 4/3;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        
+        .gallery-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        }
+        
+        .gallery-item:hover img {
+            transform: scale(1.05);
+        }
+        
+        .gallery-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.6);
+            padding: 15px;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+        
+        .gallery-item:hover .gallery-overlay {
+            transform: translateY(0);
+        }
+        
+        .gallery-overlay h3 {
+            color: white;
+            margin: 0 0 8px;
+            font-size: 1.1rem;
+        }
+        
+        .gallery-overlay p {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9rem;
+            margin: 0;
+        }
+        
+        footer {
+            background: rgba(0,0,0,0.3);
+            padding: 3rem 2rem;
+            text-align: center;
+            margin-top: 5rem;
+            border-top: 1px solid var(--border);
+            position: relative;
+            z-index: 1;
+            backdrop-filter: blur(5px);
+        }
+
+        footer .copyright {
+            margin-bottom: 15px;
+        }
+
+        footer .links a {
+            color: var(--accent);
+            text-decoration: none;
+            margin: 0 15px;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--card-bg);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+            backdrop-filter: blur(2px);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.15) rotate(15deg);
+        }
+
+        .theme-toggle::before {
+            content: "🌓";
+            font-size: 24px;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2.2rem;
+            }
+            .subtitle {
+                font-size: 1.1rem;
+            }
+            nav a {
+                margin: 5px;
+                padding: 0.5rem 0.8rem;
+                font-size: 0.9rem;
+            }
+            .card {
+                padding: 1.5rem;
+            }
+            .card h2 {
+                font-size: 1.7rem;
+            }
+            .theme-toggle {
+                bottom: 20px;
+                right: 20px;
+                width: 45px;
+                height: 45px;
+            }
+            .gallery {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
+    <div id="particles-js"></div>
+    <div class="tech-pattern"></div>
+    <div class="theme-toggle"></div>
+
     <header>
-        <h1>关于QJY HUB</h1>
-        <p>探索知识的乐趣，分享技术的奇思。</p>
+        <div class="container">
+            <h1>关于 QJY HUB</h1>
+            <p class="subtitle">探索知识的乐趣，分享技术的奇思</p>
+        </div>
     </header>
+    
     <nav>
         <a href="index.html">首页</a>
         <a href="apps.html">软件库</a>
         <a href="home.html">个人主页</a>
-        <a href="introduce.html">关于我</a>
+        <a href="gamehall.html">小游戏</a>
+        <a href="introduce.html" class="active">关于我</a>
+        <a href="introduce-en.html">English</a>
     </nav>
+    
     <div class="container">
-        <div class="post">
-            <h2>欢迎来到QJY HUB</h2>
-            <p>我是QJY，一个14岁的初中生。欢迎来到我的个人博客。这里是我分享技术、游戏、以及其他各种有趣话题的地方。</p>
-            <p>无论你是新手还是专家，我希望在这里你能找到有价值的信息和启发。随时浏览我的博文，与我互动，一起探索知识的乐趣。</p>
+        <!-- 欢迎卡片 -->
+        <div class="card content-section">
+            <h2>欢迎来到 QJY HUB</h2>
+            <p>我是权嘉佑，一个热爱编程和创新的15岁高中生。这里是我的数字家园，一个分享技术、游戏创想和探索知识的平台。</p>
+            <p>本站于2023年起开始编写并托管于Github，结束于中考前，又迎着AI兴起的浪潮，所以网站大多复杂的结构和内容由我和AI合作完成，实在没有精力独自编写了🤣</p>
+            <p>因为毕竟只是业余爱好，没有投入全部精力，所以存在许多不足之处，还请各位多多指教！</p>
+            
+            <div class="badges">
+                <span class="badge"><i class="fas fa-code"></i>Python</span>
+                <span class="badge"><i class="fas fa-code"></i>HTML/CSS</span>
+                <span class="badge"><i class="fas fa-code"></i>JavaScript</span>
+                <span class="badge"><i class="fas fa-gamepad"></i>游戏设计</span>
+                <span class="badge"><i class="fas fa-pen-fancy"></i>UI/UX设计</span>
+                <span class="badge"><i class="fas fa-pen-fancy"></i>Android/Windows程序开发</span>
+            </div>
         </div>
-        <div class="post">
-            <h2>联系方式</h2>
-            <p>你可以通过以下方式联系我：</p>
-            <ul>
-                <li>电子邮件：qjy.py@outlook.com</li>
+        
+        <!-- 联系方式卡片 -->
+        <div class="card content-section">
+            <h2>与我联系</h2>
+            <p>如果您有任何问题、建议，或只是想聊聊技术话题，欢迎随时联系我：</p>
+            
+            <ul class="contact-info">
+                <li>
+                    <i class="far fa-envelope"></i>
+                    <span>邮箱：<a href="mailto:qjy.py@outlook.com" style="color: var(--accent);">qjy.py@outlook.com</a></span>
+                </li>
+                <li>
+                    <i class="fab fa-github"></i>
+                    <span>GitHub：<a href="https://github.com/qjy" style="color: var(--accent);">github.com/qjy7add6</a></span>
+                </li>
+                <li>
+                    <i class="fab fa-weixin"></i>
+                    <span>微信：Jy021-</span>
+                </li>
+                <li>
+                    <i class="fas fa-code-branch"></i>
+                    <span>技术交流：<a href="https://discord.gg/qjyhub" style="color: var(--accent);">QJY HUB Discord</a></span>
+                </li>
             </ul>
         </div>
-        <div class="post">
+        
+        <!-- 项目画廊卡片 -->
+        <div class="card content-section">
+            <h2>项目集锦</h2>
+            <p>以下是我近期完成或正在开发的项目展示：</p>
+            
             <div class="gallery">
-                <img src="https://s1.ax1x.com/2023/08/16/pPQowaF.jpg" alt="pPQowaF.jpg" border="0" /></a>
+                <!-- 项目1 -->
+                <div class="gallery-item">
+                    <img src="https://s1.ax1x.com/2023/08/16/pPQowaF.jpg" alt="Dreed OS系统截图">
+                    <div class="gallery-overlay">
+                        <h3>Dreed OS 3.0/Vive OS 琬琰系统</h3>
+                        <p>自主开发的操作系统UI</p>
+                    </div>
+                </div>
                 
-                <!-- 在这里继续添加更多图片 -->
+                <!-- 项目2 -->
+                <div class="gallery-item">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='225' viewBox='0 0 300 225'%3E%3Crect width='300' height='225' fill='%232A2356'/%3E%3Ctext x='150' y='110' font-family='Arial' font-size='24' text-anchor='middle' fill='%23FFFFFF'%3E游戏大厅%3C/text%3E%3C/svg%3E" alt="游戏大厅">
+                    <div class="gallery-overlay">
+                        <h3>游戏大厅</h3>
+                        <p>集成多种自研/搬运小游戏</p>
+                    </div>
+                </div>
+                
+                <!-- 项目3 -->
+                <div class="gallery-item">
+                    <img src="https://img.scdn.io/i/6875f1f578828_1752560117.webp">
+                    <div class="gallery-overlay">
+                        <h3>QJY Mail</h3>
+                        <p>自研Android非即时通讯邮箱软件【前往软件库下载】</p>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="https://img.scdn.io/i/6875f1f54e2ae_1752560117.webp">
+                    <div class="gallery-overlay">
+                        <h3>QJY弹窗病毒</h3>
+                        <p>自研Windows端娱乐性弹窗《病毒》，不伤电脑，等一段时间自动关闭【前往软件库下载】</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+    
     <footer>
-        <p>&copy; 2023 QJY HUB 版权所有。</p>
+        <div class="copyright">
+            <p>&copy; 2023-2025 QJY HUB 版权所有 | 探索知识的乐趣，分享技术的奇思</p>
+        </div>
+        <div class="links">
+            <a href="index.html">隐私政策</a>
+            <a href="index.html">使用条款</a>
+            <a href="introduce.html">联系</a>
+            <a href="introduce.html">支持项目</a>
+        </div>
     </footer>
+    
+    <script>
+        // 粒子配置
+        const particleConfig = {
+            particles: {
+                number: { 
+                    value: 80, 
+                    density: { 
+                        enable: true, 
+                        value_area: 800 
+                    } 
+                },
+                color: { 
+                    value: "#ffffff"
+                },
+                shape: { 
+                    type: "circle"
+                },
+                opacity: { 
+                    value: 0.5, 
+                    random: true 
+                },
+                size: { 
+                    value: 3, 
+                    random: true,
+                    anim: {
+                        enable: true,
+                        speed: 2,
+                        size_min: 0.3,
+                        sync: false
+                    }
+                },
+                line_linked: {
+                    enable: true,
+                    distance: 150,
+                    color: "rgba(255,255,255,0.4)",
+                    opacity: 0.4,
+                    width: 1
+                },
+                move: {
+                    enable: true,
+                    speed: 1.5,
+                    direction: "none",
+                    random: true,
+                    straight: false,
+                    out_mode: "bounce",
+                    bounce: false
+                }
+            },
+            interactivity: {
+                detect_on: "canvas",
+                events: {
+                    onhover: { 
+                        enable: true, 
+                        mode: "grab" 
+                    },
+                    onclick: { 
+                        enable: true, 
+                        mode: "push" 
+                    },
+                    resize: true
+                },
+                modes: {
+                    grab: {
+                        distance: 140,
+                        line_linked: {
+                            opacity: 0.5
+                        }
+                    },
+                    push: {
+                        particles_nb: 3
+                    }
+                }
+            },
+            retina_detect: true
+        };
+        
+        // 初始化粒子效果
+        particlesJS('particles-js', particleConfig);
+        
+        // 主题切换
+        const themeToggle = document.querySelector('.theme-toggle');
+        const body = document.body;
+        const nav = document.querySelector('nav');
+        
+        // 初始化主题
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            body.setAttribute('data-theme', savedTheme);
+        } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+            body.setAttribute('data-theme', 'light');
+        }
+
+        // 监听滚动效果
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+        });
+
+        // 主题切换
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            body.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        });
+    </script>
 </body>
 </html>
