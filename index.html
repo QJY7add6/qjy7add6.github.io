@@ -6,6 +6,7 @@
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;500;700&family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <style>
         :root {
             --primary: #2A2356;
@@ -39,6 +40,7 @@
             margin: 0;
             min-height: 100vh;
             transition: background 0.5s ease, color 0.3s ease;
+            overflow-x: hidden;
         }
 
         #particles-js {
@@ -50,12 +52,31 @@
             z-index: -1;
         }
 
+        /* 科技感背景网格 */
+        .tech-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(60, 157, 248, 0.05) 0px, transparent 2px),
+                radial-gradient(circle at 30% 40%, rgba(60, 157, 248, 0.05) 0px, transparent 2px),
+                radial-gradient(circle at 70% 90%, rgba(60, 157, 248, 0.05) 0px, transparent 2px),
+                radial-gradient(circle at 90% 30%, rgba(60, 157, 248, 0.05) 0px, transparent 2px);
+            background-size: 250px 250px;
+            z-index: -2;
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
         header {
             background: linear-gradient(135deg, var(--primary) 0%, #3A1C71 100%);
             padding: 4rem 2rem;
             text-align: center;
             position: relative;
             overflow: hidden;
+            z-index: 1;
         }
 
         header::after {
@@ -75,6 +96,15 @@
             margin: 0 0 1rem;
             letter-spacing: 2px;
             text-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            position: relative;
+            z-index: 1;
+        }
+
+        header p {
+            position: relative;
+            z-index: 1;
+            font-size: 1.5rem;
+            opacity: 0.9;
         }
 
         nav {
@@ -88,6 +118,16 @@
             justify-content: center;
             flex-wrap: wrap;
             align-items: center;
+            transition: background 0.3s;
+        }
+
+        nav.scrolled {
+            background: rgba(42, 35, 86, 0.8);
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+        }
+
+        [data-theme="light"] nav.scrolled {
+            background: rgba(248, 249, 250, 0.9);
         }
 
         nav a {
@@ -98,6 +138,7 @@
             border-radius: 30px;
             transition: all 0.3s ease;
             font-weight: 500;
+            position: relative;
         }
 
         nav a:hover {
@@ -106,10 +147,28 @@
             box-shadow: 0 4px 15px rgba(60,157,248,0.3);
         }
 
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: all 0.3s;
+            transform: translateX(-50%);
+        }
+
+        nav a:hover::after {
+            width: 60%;
+        }
+
         .container {
             padding: 3rem 2rem;
             margin: 0 auto;
             max-width: 1200px;
+            position: relative;
+            z-index: 1;
         }
 
         .post {
@@ -119,11 +178,12 @@
             margin-bottom: 2rem;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             border: 1px solid var(--border);
+            backdrop-filter: blur(5px);
         }
 
         .post:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
         }
 
         .post h2 {
@@ -156,11 +216,26 @@
             color: var(--secondary);
             text-decoration: none;
             position: relative;
+            transition: color 0.3s;
         }
 
         a:hover {
             color: var(--accent);
-            text-decoration: underline;
+        }
+
+        a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -2px;
+            left: 0;
+            background-color: var(--accent);
+            transition: width 0.3s;
+        }
+
+        a:hover::after {
+            width: 100%;
         }
 
         footer {
@@ -169,6 +244,9 @@
             text-align: center;
             margin-top: 5rem;
             border-top: 1px solid var(--border);
+            position: relative;
+            z-index: 1;
+            backdrop-filter: blur(5px);
         }
 
         .theme-toggle {
@@ -186,15 +264,16 @@
             justify-content: center;
             z-index: 1000;
             transition: transform 0.3s ease;
+            backdrop-filter: blur(2px);
         }
 
         .theme-toggle:hover {
-            transform: scale(1.1) rotate(15deg);
+            transform: scale(1.15) rotate(15deg);
         }
 
         .theme-toggle::before {
             content: "🌓";
-            font-size: 55px;
+            font-size: 24px;
         }
 
         @media (max-width: 768px) {
@@ -204,24 +283,98 @@
             nav a {
                 margin: 0 0.5rem;
                 padding: 0.5rem 1rem;
+                font-size: 0.9rem;
             }
             .post {
-                padding: 1.5rem;
+                padding: 1.8rem;
             }
             .theme-toggle {
                 bottom: 20px;
                 right: 20px;
-                width: 40px;
-                height: 40px;
+                width: 45px;
+                height: 45px;
             }
             nav {
-                padding: 0.8rem;
+                padding: 1rem;
+                justify-content: space-around;
             }
+        }
+
+        /* 数据流动画效果 - 改进版 */
+        .data-stream {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .data-item {
+            position: absolute;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            color: rgba(60, 157, 248, 0.4);
+            font-size: 14px;
+            opacity: 0;
+            animation: dataFlow linear infinite;
+            text-shadow: 0 0 3px rgba(60, 157, 248, 0.8);
+        }
+        
+        @keyframes dataFlow {
+            0% {
+                transform: translateY(-100px) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.4;
+            }
+            90% {
+                opacity: 0.4;
+            }
+            100% {
+                transform: translateY(100vh) translateX(15px);
+                opacity: 0;
+            }
+        }
+
+        /* 粒子连接线 */
+        .particles-connect {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .connect-line {
+            position: absolute;
+            background: linear-gradient(to right, var(--secondary), var(--accent));
+            height: 1px;
+            transform-origin: left;
+            opacity: 0.3;
+        }
+
+        /* 脉冲圆圈效果 */
+        .pulse-circle {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0;
+            box-shadow: 0 0 0 0 rgba(60, 157, 248, 0.8);
+            z-index: -1;
         }
     </style>
 </head>
 <body>
     <div id="particles-js"></div>
+    <div class="tech-pattern"></div>
+    <div class="particles-connect" id="particles-connect"></div>
+    <div class="data-stream" id="data-stream"></div>
     <div class="theme-toggle"></div>
 
     <header>
@@ -292,7 +445,7 @@
         </div>
         <div class="post">
             <h2>Have a try</h2>
-            <p>第一个利用EPL开发的“无毒无害”适用于Windows的电脑病毒---“QJY弹窗病毒”</p>
+            <p>第一个利用EPL开发的"无毒无害"适用于Windows的电脑病毒---"QJY弹窗病毒"</p>
             <p>在软件库 <a href="apps.html">查看</a></p>
         </div>
     </div>
@@ -303,57 +456,327 @@
     <script>
         const themeToggle = document.querySelector('.theme-toggle');
         const body = document.body;
+        const nav = document.querySelector('nav');
+        
+        // 粒子连接容器
+        const particlesConnect = document.getElementById('particles-connect');
+        
+        // 数据流容器
+        const dataStream = document.getElementById('data-stream');
+        
+        // 避免重叠的数据流位置跟踪
+        const activeColumns = Array(20).fill(0).map(() => 0);
+        const columnWidth = window.innerWidth / 20;
+        
+        // 创建数据流动画（改进版）
+        function createDataStream() {
+            const itemsPerFrame = 2;
+            const chars = "01";
+            
+            for (let i = 0; i < itemsPerFrame; i++) {
+                const columnIndex = Math.floor(Math.random() * 20);
+                const leftPosition = columnIndex * columnWidth + Math.random() * (columnWidth - 100);
+                
+                // 避免重叠 - 在所选列没有其他活动的数据项时创建
+                if (activeColumns[columnIndex] === 0) {
+                    activeColumns[columnIndex] = 1;
+                    
+                    const dataItem = document.createElement('div');
+                    dataItem.className = 'data-item';
+                    
+                    // 创建二进制数据串
+                    let dataText = '';
+                    const length = Math.floor(15 + Math.random() * 15);
+                    for (let j = 0; j < length; j++) {
+                        const randomIndex = Math.floor(Math.random() * chars.length);
+                        dataText += chars[randomIndex];
+                    }
+                    
+                    dataItem.textContent = dataText;
+                    dataItem.style.left = `${leftPosition}px`;
+                    dataItem.style.fontSize = `${0.8 + Math.random() * 0.4}em`;
+                    dataItem.style.animationDuration = `${5 + Math.random() * 10}s`;
+                    dataItem.style.animationDelay = `${Math.random() * 2}s`;
+                    
+                    dataStream.appendChild(dataItem);
+                    
+                    // 动画完成后移除并释放列
+                    setTimeout(() => {
+                        activeColumns[columnIndex] = 0;
+                        if (dataItem.parentNode) {
+                            dataItem.parentNode.removeChild(dataItem);
+                        }
+                    }, parseInt(dataItem.style.animationDuration) * 1000 + 500);
+                }
+            }
+            
+            requestAnimationFrame(createDataStream);
+        }
 
+        // 创建粒子间的连接线
+        function createConnections(particles) {
+            // 清除现有连接线
+            particlesConnect.innerHTML = '';
+            
+            // 每15帧创建一次连接（减少性能消耗）
+            if (Date.now() % 15 !== 0) return;
+            
+            const maxConnections = 50;
+            let connections = 0;
+            
+            // 创建粒子间连接线
+            for (let i = 0; i < particles.length && connections < maxConnections; i++) {
+                for (let j = i + 1; j < particles.length && connections < maxConnections; j++) {
+                    const p1 = particles[i];
+                    const p2 = particles[j];
+                    
+                    // 计算两点间距离
+                    const dx = p1.x - p2.x;
+                    const dy = p1.y - p2.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    // 只连接近距离的粒子
+                    if (distance > 80 && distance < 200) {
+                        const line = document.createElement('div');
+                        line.className = 'connect-line';
+                        
+                        // 设置线的位置和方向
+                        const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+                        line.style.width = `${distance}px`;
+                        line.style.left = `${p1.x}px`;
+                        line.style.top = `${p1.y}px`;
+                        line.style.transform = `rotate(${angle}deg)`;
+                        
+                        // 根据距离设置透明度和颜色
+                        line.style.opacity = `${Math.max(0.15, 0.5 - distance/400)}`;
+                        
+                        particlesConnect.appendChild(line);
+                        connections++;
+                    }
+                }
+            }
+            
+            // 创建连接到鼠标位置的线（交互增强）
+            if (mousePosition.x > 0) {
+                for (let i = 0; i < Math.min(5, particles.length); i++) {
+                    const p = particles[i];
+                    const dx = p.x - mousePosition.x;
+                    const dy = p.y - mousePosition.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < 250) {
+                        const line = document.createElement('div');
+                        line.className = 'connect-line';
+                        line.style.background = `linear-gradient(to right, var(--accent), var(--secondary))`;
+                        
+                        const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+                        line.style.width = `${distance}px`;
+                        line.style.left = `${p.x}px`;
+                        line.style.top = `${p.y}px`;
+                        line.style.transform = `rotate(${angle}deg)`;
+                        line.style.opacity = `${0.4 - distance/1000}`;
+                        
+                        particlesConnect.appendChild(line);
+                    }
+                }
+            }
+        }
+
+        // 创建脉冲圆圈
+        function createPulseCircle(x, y) {
+            const circle = document.createElement('div');
+            circle.className = 'pulse-circle';
+            circle.style.left = `${x}px`;
+            circle.style.top = `${y}px`;
+            
+            document.body.appendChild(circle);
+            
+            // 动画
+            setTimeout(() => {
+                circle.style.transition = 'box-shadow 1s, transform 1s, opacity 1s';
+                circle.style.boxShadow = '0 0 0 20px rgba(60, 157, 248, 0)';
+                circle.style.transform = 'scale(3)';
+                circle.style.opacity = '0.8';
+                
+                setTimeout(() => {
+                    circle.remove();
+                }, 1000);
+            }, 10);
+        }
+        
+        // 跟踪鼠标位置
+        const mousePosition = {x: -1, y: -1};
+        document.addEventListener('mousemove', (e) => {
+            mousePosition.x = e.clientX;
+            mousePosition.y = e.clientY;
+        });
+
+        // 初始化主题
         const savedTheme = localStorage.getItem('theme');
-        if (savedTheme) body.setAttribute('data-theme', savedTheme);
+        if (savedTheme) {
+            body.setAttribute('data-theme', savedTheme);
+        } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+            body.setAttribute('data-theme', 'light');
+        }
 
+        // 监听滚动效果
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+        });
+
+        // 主题切换
         themeToggle.addEventListener('click', () => {
             const currentTheme = body.getAttribute('data-theme');
             const newTheme = currentTheme === 'light' ? 'dark' : 'light';
             body.setAttribute('data-theme', newTheme);
             localStorage.setItem('theme', newTheme);
+            
+            // 更新粒子配置
             particlesJS('particles-js', getParticleConfig(newTheme));
         });
 
+        // 粒子配置
         function getParticleConfig(theme) {
             return {
                 particles: {
-                    number: { value: 80, density: { enable: true, value_area: 800 } },
-                    color: { value: theme === 'light' ? '#000000' : '#ffffff' },
-                    shape: { type: "circle" },
-                    opacity: { value: 0.3, random: true },
-                    size: { value: 3, random: true },
+                    number: { 
+                        value: 100, 
+                        density: { 
+                            enable: true, 
+                            value_area: 800 
+                        } 
+                    },
+                    color: { 
+                        value: theme === 'light' ? '#000000' : '#ffffff',
+                        animation: {
+                            enable: true,
+                            speed: 10,
+                            sync: true
+                        }
+                    },
+                    shape: { 
+                        type: ["circle", "triangle", "polygon"],
+                        stroke: {
+                            width: 0,
+                            color: theme === 'light' ? '#000000' : '#ffffff'
+                        },
+                        polygon: {
+                            nb_sides: 5
+                        }
+                    },
+                    opacity: { 
+                        value: 0.6, 
+                        random: true,
+                        anim: {
+                            enable: true,
+                            speed: 1,
+                            opacity_min: 0.2,
+                            sync: false
+                        }
+                    },
+                    size: { 
+                        value: 3, 
+                        random: true,
+                        anim: {
+                            enable: true,
+                            speed: 2,
+                            size_min: 0.5,
+                            sync: false
+                        }
+                    },
                     line_linked: {
-                        enable: true,
-                        distance: 150,
-                        color: theme === 'light' ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.2)',
-                        opacity: 0.4,
-                        width: 1
+                        enable: false
                     },
                     move: {
                         enable: true,
-                        speed: 3,
+                        speed: 1.5,
                         direction: "none",
-                        random: false,
+                        random: true,
                         straight: false,
-                        out_mode: "out",
-                        bounce: false
+                        out_mode: "bounce",
+                        bounce: false,
+                        attract: {
+                            enable: true,
+                            rotateX: 600,
+                            rotateY: 1200
+                        }
                     }
                 },
                 interactivity: {
                     detect_on: "canvas",
                     events: {
-                        onhover: { enable: true, mode: "repulse" },
-                        onclick: { enable: true, mode: "push" },
+                        onhover: { 
+                            enable: true, 
+                            mode: "grab",
+                            parallax: {
+                                enable: true,
+                                force: 60,
+                                smooth: 10
+                            }
+                        },
+                        onclick: { 
+                            enable: true, 
+                            mode: "push" 
+                        },
                         resize: true
+                    },
+                    modes: {
+                        grab: {
+                            distance: 140,
+                            line_linked: {
+                                opacity: 0.8
+                            }
+                        },
+                        push: {
+                            particles_nb: 5
+                        }
                     }
                 },
                 retina_detect: true
             }
         }
 
-        let currentTheme = localStorage.getItem('theme') || 'dark';
+        // 初始化粒子
+        let currentTheme = body.getAttribute('data-theme') || 'dark';
         particlesJS('particles-js', getParticleConfig(currentTheme));
+        
+        // 粒子动画循环
+        function animateParticles() {
+            if (typeof particlesJS !== 'undefined' && particlesJS && particlesJS.particles) {
+                const particles = particlesJS.particles.array || [];
+                createConnections(particles);
+            }
+            requestAnimationFrame(animateParticles);
+        }
+        
+        // 启动动画
+        createDataStream();
+        animateParticles();
+        
+        // 随机创建脉冲圆圈
+        setInterval(() => {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            const randomX = 50 + Math.random() * (width - 100);
+            const randomY = 50 + Math.random() * (height - 100);
+            createPulseCircle(randomX, randomY);
+        }, 2000);
+        
+        // 点击创建脉冲圆圈效果
+        document.addEventListener('click', (e) => {
+            createPulseCircle(e.clientX, e.clientY);
+        });
+        
+        // 自动切换深色模式
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+        prefersDark.addListener(e => {
+            body.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+            particlesJS('particles-js', getParticleConfig(e.matches ? 'dark' : 'light'));
+        });
     </script>
 </body>
 </html>
